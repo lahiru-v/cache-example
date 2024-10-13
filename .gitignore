@@ -1,0 +1,76 @@
+# SBT directories
+/target/
+/project/target/
+/project/project/
+
+# Scala-IDE specific
+/.classpath
+/.project
+/.settings/
+/.idea/
+/.bsp/
+/*.iws
+/*.iml
+/*.ipr
+
+# Mac-specific files
+.DS_Store
+
+# Log files
+*.log
+
+# IntelliJ specific files
+.idea/
+*.iws
+*.iml
+*.ipr
+/out/
+
+# SBT specific files
+lib_managed/
+src_managed/
+/dist/
+/tmp/
+/.cache/
+/lib/
+/logs/
+/*.lock
+*.lock.json
+
+# Scala.js specific files
+/.jvm/
+/.js/
+
+# Eclipse specific files
+/.metadata/
+/bin/
+
+# Vagrant
+.vagrant/
+
+# General system files
+*.swp
+*~
+
+# Coverage reports
+/coverage/
+/target/scala-*/scoverage-data/
+/target/scala-*/scoverage-report/
+/scoverage-data/
+
+# Test reports
+/test-reports/
+/target/test-reports/
+
+# Build artifacts
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.tgz
+*.gz
+
+# Ensuring that environment variables are not committed
+.env
