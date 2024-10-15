@@ -1,4 +1,4 @@
-CREATE TABLE books
+CREATE TABLE book
 (
 	id          SERIAL PRIMARY KEY,
 	title       VARCHAR(50) NOT NULL,

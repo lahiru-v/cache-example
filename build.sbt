@@ -2,12 +2,12 @@ name := "cache-example"
 
 description := "Example service for 2024 PagLabs"
 
-scalaVersion := "2.13.0"
+scalaVersion := "2.12.4"
 
 libraryDependencies ++= Seq(
-//  "org.scalikejdbc" %% "scalikejdbc" % "3.5.0", // Optional, if you need for connection
-  "com.typesafe.slick" %% "slick" % "3.3.3",
+  "com.typesafe.slick" %% "slick" % "3.3.1",
   "org.postgresql" % "postgresql" % "42.7.4",
-  "org.flywaydb" % "flyway-database-postgresql" % "10.16.0",
+  "org.flywaydb" % "flyway-core" % "9.18.0",
   "com.typesafe" % "config" % "1.4.1",
+  "com.typesafe.slick" %% "slick-hikaricp" % "3.3.1",
 )

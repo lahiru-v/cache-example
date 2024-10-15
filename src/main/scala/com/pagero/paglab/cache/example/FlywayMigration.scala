@@ -11,9 +11,6 @@ object FlywayMigration {
     val dbUser = config.getString("database.user")
     val dbPassword = config.getString("database.password")
 
-    Flyway.configure().
-      dataSource(dbUrl, dbUser, dbPassword).
-      load().
-      migrate()
+    Flyway.configure().dataSource(dbUrl, dbUser, dbPassword).load().migrate()
   }
 }
