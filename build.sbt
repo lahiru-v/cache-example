@@ -10,4 +10,5 @@ libraryDependencies ++= Seq(
   "org.flywaydb" % "flyway-core" % "9.18.0",
   "com.typesafe" % "config" % "1.4.1",
   "com.typesafe.slick" %% "slick-hikaricp" % "3.3.1",
+  "com.mchange" % "c3p0" % "0.10.1"
 )

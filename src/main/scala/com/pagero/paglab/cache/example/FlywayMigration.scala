@@ -7,9 +7,9 @@ object FlywayMigration {
 
   def migrate(): Unit = {
     val config = ConfigFactory.load()
-    val dbUrl = config.getString("database.url")
-    val dbUser = config.getString("database.user")
-    val dbPassword = config.getString("database.password")
+    val dbUrl = config.getString("db.url")
+    val dbUser = config.getString("db.user")
+    val dbPassword = config.getString("db.password")
 
     Flyway.configure().dataSource(dbUrl, dbUser, dbPassword).load().migrate()
   }

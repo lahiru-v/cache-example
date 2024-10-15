@@ -22,16 +22,3 @@ trait BookComponent {
 
   val bookQuery = TableQuery[BookTable]
 }
-
-//class BookTable(tag: Tag) extends Table[Book](tag, "book") {
-//
-//  def id: Rep[Int] = column[Int]("id", O.PrimaryKey, O.AutoInc)
-//
-//  def title: Rep[String] = column[String]("title")
-//
-//  def description: Rep[Option[String]] = column[Option[String]]("description")
-//
-//  def pageCount: Rep[Int] = column[Int]("page_count")
-//
-//  override def * : ProvenShape[Book] = (id, title, description, pageCount).<>(Book.tupled, Book.unapply)
-//}
