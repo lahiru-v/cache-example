@@ -11,6 +11,7 @@ class BookDao {
    def findById(id: Int): DBIOAction[Option[Book], NoStream, Effect.Read] = {
     val state = getState(id) // Get state with frequency and recency
     val action = selectAction(state) // Choose action based on Q-Table
+     println(s"id - $id - $state - $action")
 
     if (action == "Cache") {
       cache.get(id.toString) match {
@@ -26,7 +27,6 @@ class BookDao {
           }
         case book =>
           println("cache hit - " + id)
-
           DBIO.successful(Some(book)) // Return cached value
       }
     } else {

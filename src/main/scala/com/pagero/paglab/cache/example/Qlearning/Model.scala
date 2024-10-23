@@ -50,10 +50,10 @@ object Model {
   }
 
   // Define recency categories
-  def getRecencyCategory(lastAccessTime: LocalDateTime): String = {
-    val minutesSinceLastAccess = java.time.Duration.between(lastAccessTime, LocalDateTime.now()).toMinutes
-    if (minutesSinceLastAccess <= 5) "Recent"
-    else if (minutesSinceLastAccess <= 30) "MediumRecency"
+  private def getRecencyCategory(lastAccessTime: LocalDateTime): String = {
+    val minutesSinceLastAccess = java.time.Duration.between(lastAccessTime, LocalDateTime.now()).toSeconds
+    if (minutesSinceLastAccess <= 1) "Recent"
+    else if (minutesSinceLastAccess <= 3) "MediumRecency"
     else "Stale"
   }
 
@@ -63,7 +63,7 @@ object Model {
     s"$frequencyCategory-$recencyCategory"  // Example: "LowFrequency-Recent"
   }
   // Reward System
-  def getReward(state: String): Double = state match {
+  private def getReward(state: String): Double = state match {
     case "CacheHit" => 1.0  // Positive reward for cache hit
     case "CacheMiss" => -1.0  // Negative reward for cache miss
   }
@@ -97,7 +97,7 @@ object Model {
 
   def runQLearning(): Unit = {
     for (episode <- 1 to 1000) { // Run for a number of episodes
-      val id = Random.nextInt(100) // Simulate random data requests
+      val id = Random.nextInt(20) // Simulate random data requests
       val state = getState(id) // Get enhanced state with frequency and recency
 
       // Take an action based on the current state
@@ -109,6 +109,25 @@ object Model {
 
       // Update Q-Table with the experience
       updateQTable(state, action, reward, nextState)
+    }
+  }
+
+
+  // Function to log Q-table in a tabular format
+  def logQTable(): Unit = {
+    // Extract all states and actions from the Q-table
+    val states = qTable.keys.map(_._1).toSet
+    val actions = qTable.keys.map(_._2).toSet
+    // Print header (actions as columns)
+    println(f"${"State/Action"}%-35s" + actions.map(a => f"$a%-10s").mkString(" "))
+
+    // Print each state and its corresponding Q-values for each action
+    for (state <- states) {
+      val row = actions.map { action =>
+        f"${qTable((state, action))}%-10.2f" // Format Q-values to 2 decimal places
+      }.mkString(" ")
+
+      println(f"$state%-35s" + row)
     }
   }
 
