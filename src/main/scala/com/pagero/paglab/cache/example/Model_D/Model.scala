@@ -13,16 +13,21 @@ object Model {
 
   private def getReward(bookName: String): Double = {
     if (cache.contains(bookName)) 1.0 else -0.5
+    //if the book is in the cache the reward is 1 or else it -0.5
   }
 
   private def selectAction(bookName: String): Boolean = {
     if (Random.nextDouble() < epsilon) {
       Random.nextBoolean()
+      //Exploration
     } else {
       val qUpdate = qValues((bookName, true))
       val qNoUpdate = qValues((bookName, false))
       qUpdate > qNoUpdate
+      //Exploitation
     }
+
+    //here since the epsilon value is 0.2 the exploration is done 20% and exploitation is done 80% of the time
   }
 
   private def updateQValue(bookName: String, action: Boolean, reward: Double, nextBookName: String): Unit = {
