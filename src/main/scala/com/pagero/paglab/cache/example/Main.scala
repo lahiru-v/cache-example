@@ -29,25 +29,29 @@ object Main extends App {
 //  fetchAndPrintBook(1)
 //  fetchAndPrintBook(4)
 //  fetchAndPrintBook(3)
-  simulateLoad(10)
-  Model.runQLearning()
+
+
+//  Model.runQLearning()
+//  Model.logQTable()
+  simulateLoad(3000)
   Model.logQTable()
+
   println("End of the application....")
 
   // Function to simulate load
   private def simulateLoad(iterations: Int): Unit = {
-    val totalBooks = 20 // Assuming you have 5 books in your dataset
+    val totalBooks = 6 // Assuming you have 5 books in your dataset
 
     (1 to iterations).foreach { _ =>
       val randomId = Random.nextInt(totalBooks) + 1
       fetchAndPrintBook(randomId)
 
       // Simulate delay between requests
-      Thread.sleep(Random.nextInt(500)) // Random delay between 0 and 500ms
+      Thread.sleep(Random.nextInt(800)) // Random delay between 0 and 500ms
     }
   }
   private def fetchAndPrintBook(id:Int): Unit = {
     val bookResult = Await.result(db.run(bookDao.findById(id)), Duration.Inf)
-    bookResult.foreach(book=> println(book))
+//    bookResult.foreach(book=> println(book))
   }
 }

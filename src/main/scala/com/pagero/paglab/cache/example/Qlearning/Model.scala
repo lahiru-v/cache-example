@@ -1,19 +1,17 @@
 package com.pagero.paglab.cache.example.Qlearning
+
 import com.pagero.paglab.cache.example.model.Book
 import org.ehcache.{Cache, CacheManager}
-import org.ehcache.config.CacheConfiguration
+//import org.ehcache.config.CacheConfiguration
 import org.ehcache.config.builders.{CacheConfigurationBuilder, CacheManagerBuilder, ResourcePoolsBuilder}
 import org.ehcache.config.units.EntryUnit
 
 import scala.collection.mutable
 import java.time.LocalDateTime
 import scala.util.Random
-//import net.sf.ehcache.CacheManager
-//import net.sf.ehcache.config.CacheConfiguration
-//import net.sf.ehcache.Element
 
 object Model {
-
+  val startTime = LocalDateTime.now
   // Initialize Ehcache cache manager and cache
   val cacheManager: CacheManager = CacheManagerBuilder.newCacheManagerBuilder().build(true)
 
@@ -22,15 +20,21 @@ object Model {
       ResourcePoolsBuilder.newResourcePoolsBuilder().heap(100, EntryUnit.ENTRIES)))
 
   // Define States and Actions
-  val actions = Seq("Cache", "Evict")        // Two actions: Cache or Evict
-
+  val actions = Seq("Cache", "Evict") // Two actions: Cache or Evict
+  var cacheSize = 0
   // Q-Table to store the Q-values for each state-action pair
   val qTable: mutable.Map[(String, String), Double] = mutable.Map().withDefaultValue(0.0)
+  //  qTable(("Recent", "Cache")) = 0
+  //  qTable(("Recent", "Evict")) = 0
+  //  qTable(("MediumRecency", "Cache")) = 0
+  //  qTable(("MediumRecency", "Evict")) = 0
+  //  qTable(("Stale", "Cache")) = 0
+  //  qTable(("Stale", "Evict")) = 0
 
   // Q-Learning parameters
-  val learningRate = 0.1
+  val learningRate = 0.2
   val discountFactor = 0.95
-  val explorationRate = 0.1
+  val explorationRate = 0.2
 
   // Tracking frequency and recency
   val frequencyMap: mutable.Map[Int, Int] = mutable.Map().withDefaultValue(0)
@@ -38,14 +42,19 @@ object Model {
 
   // Update frequency and recency when data is accessed
   def updateFrequencyAndRecency(dataId: Int): Unit = {
+    val currentTIme = LocalDateTime.now
+
     frequencyMap(dataId) += 1
-    recencyMap(dataId) = LocalDateTime.now
+    startTime
+    recencyMap(dataId) = currentTIme
   }
 
   // Define frequency categories
-  def getFrequencyCategory(frequency: Int): String = {
-    if (frequency <= 5) "LowFrequency"
-    else if (frequency <= 15) "MediumFrequency"
+  def getFrequencyCategory(count: Int): String = {
+    val totalTimeSeconds = java.time.Duration.between(startTime, LocalDateTime.now).toSeconds +1
+    val frequency = count / totalTimeSeconds
+    if (frequency <= 0.1) "LowFrequency"
+    else if (frequency <= 0.5) "MediumFrequency"
     else "HighFrequency"
   }
 
@@ -53,19 +62,26 @@ object Model {
   private def getRecencyCategory(lastAccessTime: LocalDateTime): String = {
     val minutesSinceLastAccess = java.time.Duration.between(lastAccessTime, LocalDateTime.now()).toSeconds
     if (minutesSinceLastAccess <= 1) "Recent"
-    else if (minutesSinceLastAccess <= 3) "MediumRecency"
+    else if (minutesSinceLastAccess <= 2) "MediumRecency"
     else "Stale"
   }
 
   def getState(dataId: Int): String = {
     val frequencyCategory = getFrequencyCategory(frequencyMap(dataId))
     val recencyCategory = getRecencyCategory(recencyMap(dataId))
-    s"$frequencyCategory-$recencyCategory"  // Example: "LowFrequency-Recent"
+    s"$frequencyCategory-$recencyCategory" // Example: "LowFrequency-Recent"
   }
+
   // Reward System
-  private def getReward(state: String): Double = state match {
-    case "CacheHit" => 1.0  // Positive reward for cache hit
-    case "CacheMiss" => -1.0  // Negative reward for cache miss
+  def getReward(dataId: String): Double = {
+    val element = cache.get(dataId)
+    if (element != null) {
+      1.0
+    } else {
+      -1.0
+    }
+    //    case "CacheHit" => 1.0 // Positive reward for cache hit
+    //    case "CacheMiss" => -1.0 // Negative reward for cache miss
   }
 
   def simulateRequest(dataId: Int): String = {
@@ -115,6 +131,7 @@ object Model {
 
   // Function to log Q-table in a tabular format
   def logQTable(): Unit = {
+    println(qTable)
     // Extract all states and actions from the Q-table
     val states = qTable.keys.map(_._1).toSet
     val actions = qTable.keys.map(_._2).toSet
