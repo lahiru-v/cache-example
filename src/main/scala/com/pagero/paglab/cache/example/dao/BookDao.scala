@@ -1,30 +1,36 @@
 package com.pagero.paglab.cache.example.dao
 
+import com.pagero.paglab.cache.example.DatabasePackage.db
+import com.pagero.paglab.cache.example.cache.ScaffeineCache
 import com.pagero.paglab.cache.example.model.Book
 import com.pagero.paglab.cache.example.model.DAL.bookQuery
 import com.pagero.paglab.cache.example.model.DAL.profile.api._
-import com.pagero.paglab.cache.example.tinylfu.LfuCache.cache
-import slick.dbio.{DBIO, DBIOAction, Effect, NoStream}
 
-import scala.collection.JavaConverters.asScalaIteratorConverter
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class BookDao {
-  def findById(id: Int): DBIOAction[Option[Book], NoStream, Effect.Read] = {
-    cache.get(id.toString) match {
-      case null =>
+
+  private val cache = ScaffeineCache.cache
+
+  def findAll: Future[Seq[Book]] = {
+    db.run(bookQuery.result)
+  }
+
+  def findById(id: Int): Future[Option[Book]] = {
+    cache.getIfPresent(id.toString) match {
+      case None =>
         println("cache miss - " + id)
-        val dbAction = bookQuery.filter(_.id === id).result.headOption
-        dbAction.map { result =>
-          result.foreach { book =>
-            cache.put(id.toString, book) // Store in Ehcache
+        val resultFuture = db.run(bookQuery.filter(_.id === id).result.headOption)
+        resultFuture.map { result: Option[Book] =>
+          result.foreach { book: Book =>
+            cache.put(id.toString, book)
           }
           result
         }
-      case book =>
+      case Some(book) =>
         println("cache hit - " + id)
-        DBIO.successful(Some(book)) // Return cached value
+        Future.successful(Some(book))
     }
-
   }
 }

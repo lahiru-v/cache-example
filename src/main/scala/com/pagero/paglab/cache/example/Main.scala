@@ -1,9 +1,6 @@
 package com.pagero.paglab.cache.example
 
-import com.pagero.paglab.cache.example.DatabasePackage.db
 import com.pagero.paglab.cache.example.dao.BookDao
-import com.pagero.paglab.cache.example.model.DAL.bookQuery
-import slick.jdbc.PostgresProfile.api._
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -13,30 +10,26 @@ object Main extends App {
   println("Hello world...")
 
   FlywayMigration.migrate()
+  private val bookDao = new BookDao()
 
-  private val result = Await.result(db.run(bookQuery.result), Duration.Inf)
+  private val result = Await.result(bookDao.findAll, Duration.Inf)
   result.foreach(book => println(book))
 
-  private val bookDao = new BookDao()
-  private val bookResult = Await.result(db.run(bookDao.findById(1)), Duration.Inf)
-  bookResult.foreach(book=> println(book))
+  private val bookResult = Await.result(bookDao.findById(1), Duration.Inf)
+  bookResult.foreach(book => println(book))
 
-//  fetchAndPrintBook(1)
-//  fetchAndPrintBook(1)
-//  fetchAndPrintBook(2)
-//  fetchAndPrintBook(3)
-//  fetchAndPrintBook(1)
-//  fetchAndPrintBook(4)
-//  fetchAndPrintBook(3)
+  //  fetchAndPrintBook(1)
+  //  fetchAndPrintBook(1)
+  //  fetchAndPrintBook(2)
+  //  fetchAndPrintBook(3)
+  //  fetchAndPrintBook(1)
+  //  fetchAndPrintBook(4)
+  //  fetchAndPrintBook(3)
 
-
-//  Model.runQLearning()
-//  Model.logQTable()
   simulateLoad(100)
 
   println("End of the application....")
 
-  // Function to simulate load
   private def simulateLoad(iterations: Int): Unit = {
     val totalBooks = 15 // Assuming you have 5 books in your dataset
 
@@ -45,11 +38,12 @@ object Main extends App {
       fetchAndPrintBook(randomId)
 
       // Simulate delay between requests
-//      Thread.sleep(Random.nextInt(800)) // Random delay between 0 and 500ms
+      //      Thread.sleep(Random.nextInt(800)) // Random delay between 0 and 500ms
     }
   }
-  private def fetchAndPrintBook(id:Int): Unit = {
-    val bookResult = Await.result(db.run(bookDao.findById(id)), Duration.Inf)
-//    bookResult.foreach(book=> println(book))
+
+  private def fetchAndPrintBook(id: Int): Unit = {
+    val bookResult = Await.result(bookDao.findById(id), Duration.Inf)
+    bookResult.foreach(book => println(book))
   }
 }

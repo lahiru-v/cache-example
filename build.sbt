@@ -11,5 +11,6 @@ libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.4.1",
   "com.typesafe.slick" %% "slick-hikaricp" % "3.3.1",
   "com.mchange" % "c3p0" % "0.10.1",
-  "org.ehcache" % "ehcache" % "3.10.0"
+  "org.ehcache" % "ehcache" % "3.10.0",
+  "com.github.blemale" %% "scaffeine" % "5.3.0"
 )
