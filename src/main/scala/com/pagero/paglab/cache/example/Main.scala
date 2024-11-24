@@ -1,7 +1,6 @@
 package com.pagero.paglab.cache.example
 
 import com.pagero.paglab.cache.example.DatabasePackage.db
-import com.pagero.paglab.cache.example.Qlearning.Model
 import com.pagero.paglab.cache.example.dao.BookDao
 import com.pagero.paglab.cache.example.model.DAL.bookQuery
 import slick.jdbc.PostgresProfile.api._
@@ -33,21 +32,20 @@ object Main extends App {
 
 //  Model.runQLearning()
 //  Model.logQTable()
-  simulateLoad(3000)
-  Model.logQTable()
+  simulateLoad(100)
 
   println("End of the application....")
 
   // Function to simulate load
   private def simulateLoad(iterations: Int): Unit = {
-    val totalBooks = 6 // Assuming you have 5 books in your dataset
+    val totalBooks = 15 // Assuming you have 5 books in your dataset
 
     (1 to iterations).foreach { _ =>
       val randomId = Random.nextInt(totalBooks) + 1
       fetchAndPrintBook(randomId)
 
       // Simulate delay between requests
-      Thread.sleep(Random.nextInt(800)) // Random delay between 0 and 500ms
+//      Thread.sleep(Random.nextInt(800)) // Random delay between 0 and 500ms
     }
   }
   private def fetchAndPrintBook(id:Int): Unit = {
