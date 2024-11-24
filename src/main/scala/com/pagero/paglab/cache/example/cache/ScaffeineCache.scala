@@ -10,6 +10,7 @@ object ScaffeineCache {
   val cache: Cache[String, Book] = Scaffeine().
     recordStats().
     expireAfterAccess(1.hour).
+    expireAfterWrite(1.hour).
     maximumSize(20).
     build[String, Book]()
 }

@@ -1,7 +1,7 @@
 package com.pagero.paglab.cache.example.dao
 
 import com.pagero.paglab.cache.example.DatabasePackage.db
-import com.pagero.paglab.cache.example.cache.ScaffeineCache
+import com.pagero.paglab.cache.example.cache.{EhCache, ScaffeineCache}
 import com.pagero.paglab.cache.example.model.Book
 import com.pagero.paglab.cache.example.model.DAL.bookQuery
 import com.pagero.paglab.cache.example.model.DAL.profile.api._
@@ -11,26 +11,45 @@ import scala.concurrent.Future
 
 class BookDao {
 
-  private val cache = ScaffeineCache.cache
+  private val scaffeineCache = ScaffeineCache.cache
+  private val ehCache = EhCache.cache
 
   def findAll: Future[Seq[Book]] = {
     db.run(bookQuery.result)
   }
 
-  def findById(id: Int): Future[Option[Book]] = {
-    cache.getIfPresent(id.toString) match {
+  def findWithScaffeineCache(id: Int): Future[Option[Book]] = {
+    scaffeineCache.getIfPresent(id.toString) match {
       case None =>
         println("cache miss - " + id)
         val resultFuture = db.run(bookQuery.filter(_.id === id).result.headOption)
         resultFuture.map { result: Option[Book] =>
           result.foreach { book: Book =>
-            cache.put(id.toString, book)
+            scaffeineCache.put(id.toString, book)
           }
           result
         }
       case Some(book) =>
         println("cache hit - " + id)
         Future.successful(Some(book))
+    }
+  }
+
+  def findWithEhCache(id: Int): Future[Option[Book]] = {
+    Option(ehCache.get(id.toString)) match {
+      case Some(book) =>
+        println("cache hit - " + id)
+        Future.successful(Some(book))
+
+      case _ =>
+        println("cache miss - " + id)
+        val resultFuture = db.run(bookQuery.filter(_.id === id).result.headOption)
+        resultFuture.map { result: Option[Book] =>
+          result.foreach { book: Book =>
+            ehCache.put(id.toString, book)
+          }
+          result
+        }
     }
   }
 }

@@ -15,7 +15,7 @@ object Main extends App {
   private val result = Await.result(bookDao.findAll, Duration.Inf)
   result.foreach(book => println(book))
 
-  private val bookResult = Await.result(bookDao.findById(1), Duration.Inf)
+  private val bookResult = Await.result(bookDao.findWithScaffeineCache(1), Duration.Inf)
   bookResult.foreach(book => println(book))
 
   //  fetchAndPrintBook(1)
@@ -43,7 +43,7 @@ object Main extends App {
   }
 
   private def fetchAndPrintBook(id: Int): Unit = {
-    val bookResult = Await.result(bookDao.findById(id), Duration.Inf)
+    val bookResult = Await.result(bookDao.findWithEhCache(id), Duration.Inf)
     bookResult.foreach(book => println(book))
   }
 }
