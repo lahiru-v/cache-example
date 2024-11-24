@@ -19,8 +19,8 @@ object CacheEvaluator {
       // Simulate delay between requests
       //      Thread.sleep(Random.nextInt(800)) // Random delay between 0 and 500ms
     }
-    println("scaffeineRates - " + scaffeineRates)
-    println("ehcacheRates - " + ehcacheRates)
+    println("scaffeineRates - " + scaffeineRates.getRates(iterations))
+    println("ehcacheRates - " + ehcacheRates.getRates(iterations))
 
   }
 

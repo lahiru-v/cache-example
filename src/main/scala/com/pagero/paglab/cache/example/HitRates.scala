@@ -9,4 +9,8 @@ class HitRates {
   def hit(): Unit = hitRate += 1
 
   override def toString: String = s"hitRate: $hitRate  missRate: $missRate"
+
+  def getRates(requestCount: Int): String = {
+    s"hitRate: ${(100*hitRate)/requestCount.toFloat}"
+  }
 }

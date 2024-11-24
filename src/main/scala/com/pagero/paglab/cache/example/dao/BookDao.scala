@@ -22,7 +22,7 @@ class BookDao {
   def findWithScaffeineCache(id: Int): Future[Option[Book]] = {
     scaffeineCache.getIfPresent(id.toString) match {
       case None =>
-        println("cache miss - " + id)
+//        println("cache miss - " + id)
         scaffeineRates.missed()
         val resultFuture = db.run(bookQuery.filter(_.id === id).result.headOption)
         resultFuture.map { result: Option[Book] =>
@@ -32,7 +32,7 @@ class BookDao {
           result
         }
       case Some(book) =>
-        println("cache hit - " + id)
+//        println("cache hit - " + id)
         scaffeineRates.hit()
         Future.successful(Some(book))
     }
@@ -41,12 +41,12 @@ class BookDao {
   def findWithEhCache(id: Int): Future[Option[Book]] = {
     Option(ehCache.get(id.toString)) match {
       case Some(book) =>
-        println("cache hit - " + id)
+//        println("cache hit - " + id)
         ehcacheRates.hit()
         Future.successful(Some(book))
 
       case _ =>
-        println("cache miss - " + id)
+//        println("cache miss - " + id)
         ehcacheRates.missed()
         val resultFuture = db.run(bookQuery.filter(_.id === id).result.headOption)
         resultFuture.map { result: Option[Book] =>

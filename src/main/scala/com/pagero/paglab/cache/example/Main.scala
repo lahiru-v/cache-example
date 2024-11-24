@@ -19,7 +19,7 @@ object Main extends App {
   //  bookResult.foreach(book => println(book))
 
 
-  simulateLoad(100000, 125, bookDao)
+  simulateLoad(100000, 200, bookDao)
 
   println("End of the application....")
 
