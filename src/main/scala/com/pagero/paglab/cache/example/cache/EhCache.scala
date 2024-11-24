@@ -14,7 +14,7 @@ object EhCache {
   private val cacheConfigBuilder = CacheConfigurationBuilder.newCacheConfigurationBuilder(
     classOf[String],
     classOf[Book],
-    ResourcePoolsBuilder.heap(20))
+    ResourcePoolsBuilder.heap(50))
   cacheConfigBuilder.withExpiry(expiryPolicy)
 
   private val cacheManager = cacheManagerBuilder.withCache("book-cache", cacheConfigBuilder.build()).build()

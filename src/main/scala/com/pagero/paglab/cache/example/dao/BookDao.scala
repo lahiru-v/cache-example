@@ -1,5 +1,6 @@
 package com.pagero.paglab.cache.example.dao
 
+import com.pagero.paglab.cache.example.CacheEvaluator.{ehcacheRates, scaffeineRates}
 import com.pagero.paglab.cache.example.DatabasePackage.db
 import com.pagero.paglab.cache.example.cache.{EhCache, ScaffeineCache}
 import com.pagero.paglab.cache.example.model.Book
@@ -22,6 +23,7 @@ class BookDao {
     scaffeineCache.getIfPresent(id.toString) match {
       case None =>
         println("cache miss - " + id)
+        scaffeineRates.missed()
         val resultFuture = db.run(bookQuery.filter(_.id === id).result.headOption)
         resultFuture.map { result: Option[Book] =>
           result.foreach { book: Book =>
@@ -31,6 +33,7 @@ class BookDao {
         }
       case Some(book) =>
         println("cache hit - " + id)
+        scaffeineRates.hit()
         Future.successful(Some(book))
     }
   }
@@ -39,10 +42,12 @@ class BookDao {
     Option(ehCache.get(id.toString)) match {
       case Some(book) =>
         println("cache hit - " + id)
+        ehcacheRates.hit()
         Future.successful(Some(book))
 
       case _ =>
         println("cache miss - " + id)
+        ehcacheRates.missed()
         val resultFuture = db.run(bookQuery.filter(_.id === id).result.headOption)
         resultFuture.map { result: Option[Book] =>
           result.foreach { book: Book =>

@@ -1,10 +1,10 @@
 package com.pagero.paglab.cache.example
 
+import com.pagero.paglab.cache.example.CacheEvaluator.simulateLoad
 import com.pagero.paglab.cache.example.dao.BookDao
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-import scala.util.Random
 
 object Main extends App {
   println("Hello world...")
@@ -13,37 +13,14 @@ object Main extends App {
   private val bookDao = new BookDao()
 
   private val result = Await.result(bookDao.findAll, Duration.Inf)
-  result.foreach(book => println(book))
+  println("no of books: " + result.size)
+  //
+  //  private val bookResult = Await.result(bookDao.findWithScaffeineCache(1), Duration.Inf)
+  //  bookResult.foreach(book => println(book))
 
-  private val bookResult = Await.result(bookDao.findWithScaffeineCache(1), Duration.Inf)
-  bookResult.foreach(book => println(book))
 
-  //  fetchAndPrintBook(1)
-  //  fetchAndPrintBook(1)
-  //  fetchAndPrintBook(2)
-  //  fetchAndPrintBook(3)
-  //  fetchAndPrintBook(1)
-  //  fetchAndPrintBook(4)
-  //  fetchAndPrintBook(3)
-
-  simulateLoad(100)
+  simulateLoad(100000, 125, bookDao)
 
   println("End of the application....")
 
-  private def simulateLoad(iterations: Int): Unit = {
-    val totalBooks = 15 // Assuming you have 5 books in your dataset
-
-    (1 to iterations).foreach { _ =>
-      val randomId = Random.nextInt(totalBooks) + 1
-      fetchAndPrintBook(randomId)
-
-      // Simulate delay between requests
-      //      Thread.sleep(Random.nextInt(800)) // Random delay between 0 and 500ms
-    }
-  }
-
-  private def fetchAndPrintBook(id: Int): Unit = {
-    val bookResult = Await.result(bookDao.findWithEhCache(id), Duration.Inf)
-    bookResult.foreach(book => println(book))
-  }
 }
