@@ -14,7 +14,6 @@ class TinyLFUEventListener[K, V](policy: TinyLFUEvictionPolicy[K], cache: Cache[
         policy.onAccess(event.getKey)
         keySet.add(event.getKey)
 
-        // Evict if the size exceeds the limit
         if (keySet.size > policy.maxSize) {
           policy.findEvictionCandidate(keySet.toSeq).foreach { evictionKey =>
             keySet.remove(evictionKey)
